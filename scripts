@@ -1,0 +1,5 @@
+go run ./cmd/lector 1 fich1.txt ./cmd/ips.txt
+go run ./cmd/lector 2 fich2.txt ./cmd/ips.txt
+go run ./cmd/lector 3 fich3.txt ./cmd/ips.txt
+
+go run ./cmd/escritor 3 fich3.txt ./cmd/ips.txt hola
