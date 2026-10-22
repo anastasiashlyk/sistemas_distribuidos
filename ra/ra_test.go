@@ -14,7 +14,6 @@ import (
 )
 
 func init() {
-	// Configuración de flags de logging exigida en guion (sección 4.2)
 	log.SetFlags(log.Lshortfile | log.Lmicroseconds)
 }
 
@@ -72,9 +71,6 @@ func stopsRA(nodos []*ra.RASharedDB) []func() {
 	return f
 }
 
-// Stop() es una BARRERA: no vuelve hasta que todos los procesos lo han
-// llamado. Por eso hay que llamarlo para todos a la vez, nunca en secuencia
-// (un defer por nodo se bloquearía en el primero).
 func detener(t *testing.T, stops []func()) {
 	var wg sync.WaitGroup
 	for _, s := range stops {
@@ -263,11 +259,10 @@ func TestMixtoLectoresEscritores(t *testing.T) {
 	}
 }
 
-// TestGestorFicherosConsistencia valida el gestor de ficheros (sección 1 del guion):
+// TestGestorFicherosConsistencia valida el gestor de ficheros
 //   EscribirFichero propaga el fragmento a todas las réplicas.
 //   LeerFichero devuelve el contenido de la réplica local.
 //   Al finalizar, todas las copias tienen exactamente el mismo contenido.
-// LeerFichero y EscribirFichero son ahora del paquete gestor (no de ra).
 func TestGestorFicherosConsistencia(t *testing.T) {
 	n := 4
 	users := creaUsersTemp(t, n)
@@ -323,10 +318,6 @@ func TestGestorFicherosConsistencia(t *testing.T) {
 	}
 
 	esperar(t, &wg, 30*time.Second)
-	// No hace falta esperar a "que se apliquen los últimos updates": EscribirFichero
-	// no vuelve hasta recibir el ack de todas las copias.
-
-	// Comprobar que todas las réplicas tienen exactamente el mismo contenido
 	data0, err := os.ReadFile(archivos[0])
 	if err != nil {
 		t.Fatalf("error leyendo replica 0: %v", err)
@@ -334,7 +325,7 @@ func TestGestorFicherosConsistencia(t *testing.T) {
 	if len(data0) == 0 {
 		t.Fatalf("la replica esta vacia tras las escrituras")
 	}
-	// 2 escritores x 3 iteraciones = 6 fragmentos, ninguno perdido
+
 	if l := strings.Count(string(data0), "\n"); l != 6 {
 		t.Errorf("se esperaban 6 fragmentos en la réplica 1, hay %d", l)
 	}
