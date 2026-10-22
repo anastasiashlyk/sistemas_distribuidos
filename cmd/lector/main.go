@@ -8,6 +8,7 @@ import (
 	"practica2/ra"
 	"strconv"
 	"time"
+	"practica2/gestor"
 )
 
 
@@ -77,7 +78,7 @@ func main() {
 	ficheroLocal := os.Args[2]
 	fichParticipantes := os.Args[3]
 
-	lector := ra.New(miPid, fichParticipantes, 0, ficheroLocal) // 0 para lectura
+	lector := gestor.New(miPid, fichParticipantes, ficheroLocal, ra.Read)
 
 	//barrera, esperamos que todos esten listos
 	err = barrera(fichParticipantes, miPid, 10*time.Second)
@@ -89,18 +90,8 @@ func main() {
 time.Sleep(1 * time.Second)
 
 	fmt.Printf("Process %d starting pre-protocol\n", miPid)
-	lector.PreProtocol()
-	// leer el fichero
-	bytes, err := os.ReadFile(ficheroLocal)
-	if err != nil {
-		fmt.Println("Error reading file:", err)
-		os.Exit(1)
-	}
-	fmt.Printf("Process %d read from file %s:\n%s\n", miPid, ficheroLocal, string(bytes))
-	//escribir contenido del fichero en la salida estandar
+	bytes := lector.LeerFichero()
 	fmt.Printf("Process %d contenido: %s\n", miPid, string(bytes))
-	fmt.Printf("Process %d post-protocol", miPid)
-	lector.PostProtocol()
 
 	time.Sleep(1 * time.Second)
 	lector.Stop()

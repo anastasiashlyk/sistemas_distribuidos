@@ -8,6 +8,7 @@ import (
 	"practica2/ra"
 	"strconv"
 	"time"
+	"practica2/gestor"
 )
 
 
@@ -77,7 +78,7 @@ func main() {
 	texto := os.Args[4]
 	fichParticipantes := os.Args[3]
 
-	esc := ra.New(miPid, fichParticipantes, 1, ficheroLocal) // 1 para escritura
+	esc := gestor.New(miPid, fichParticipantes, ficheroLocal, ra.Write)
 
 		//barrera, esperamos que todos esten listos
 	err = barrera(fichParticipantes, miPid, 10*time.Second)
@@ -86,18 +87,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	time.Sleep(1 * time.Second)	
 
 	fmt.Printf("Process %d starting pre-protocol\n", miPid)
-	esc.PreProtocol()
-	// escritura broadcast
-	esc.EscribirEnTodasCopias(texto)
+	esc.EscribirFichero(texto)
 
-
-	fmt.Printf("Process %d post-protocol", miPid)
-	esc.PostProtocol()
-
-	time.Sleep(1 * time.Second)
 	esc.Stop()
 	fmt.Printf("Process Escritor %d finished\n", miPid)
 }
