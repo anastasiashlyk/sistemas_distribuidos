@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"time"
 )
 
 type Message interface{}
@@ -51,6 +52,7 @@ func parsePeers(path string) (lines []string) {
 // Pre: pid en {1..n}, el conjunto de procesos del SD
 // Post: envía el mensaje msg a pid
 func (ms *MessageSystem) Send(pid int, msg Message) {
+	time.Sleep(1 * time.Millisecond)
 	conn, err := net.Dial("tcp", ms.peers[pid-1])
 	checkError(err)
 	encoder := gob.NewEncoder(conn)
